@@ -17,10 +17,15 @@ public class SecurityConfig {
                         .requestMatchers("/", "/index.html", "/css/**", "/img/**", "/js/**", "/fonts/**", "/login", "/member/register")
                         .permitAll() // 로그인없이 사용가능
                         .requestMatchers("/admin/**", "/vupdate", "/vdelete").hasRole("ADMIN")
-                        .requestMatchers("/visitorMain.html", "visitorForm.html", "/vlist", "vinsert", "vsearch", "/one", "/member/me").authenticated() // 로그인 필요
+                        .requestMatchers("/visitorMain.html", "/visitorForm.html", "/vlist", "/vinsert", "/vsearch", "/one", "/member/me").authenticated() // 로그인 필요
                         .anyRequest().authenticated() // 설정하지 않은 다른 요청도 로그인 필요
                 )
-                .formLogin(form->form.loginPage("/login"))
+                .formLogin(form->form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login") // 생략가능
+                        .defaultSuccessUrl("/visitorMain.html", true)
+                        .permitAll()
+                )
                 .logout(logout->logout.logoutUrl("/logout"))
                 .exceptionHandling(exception -> exception.accessDeniedPage("/access-denied"));
         return http.build();
